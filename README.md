@@ -1,9 +1,5 @@
 ## About
-Example wiki creation / updating scripts, using [mwcleric](https://github.com/RheingoldRiver/mwcleric)
-
-SORCERER the game: https://sorcerer.river.me/
-
-SORCERER wiki: https://sorcererbyriver.wiki.gg/wiki/Main_Page
+This scripts seeks to automate page and infobox creation on the Disco Elysium wiki.gg wiki. Different to upstream, this script uses a csv, not a json file as input.
 
 ## Files included
 
