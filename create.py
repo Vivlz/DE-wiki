@@ -1,9 +1,12 @@
 import csv
 import string
+import os
+from dotenv import load_dotenv
 
 from mwcleric import AuthCredentials
 from mwcleric import WikiggClient
 
+#actually not used, just here for reference
 WIKITEXT = """{{Example character infobox
 |title={{PAGENAME}}
 
@@ -35,20 +38,20 @@ WIKITEXT = """{{Example character infobox
 class Creator:
     summary = 'Creating new pages from data file'
 
-    #def __init__(self):
-        #credentials = AuthCredentials(user_file="me")
+    def __init__(self):
+        credentials = AuthCredentials()
         # the following login has been changed to edit gg.wiki.gg rather than sorcererbyriver.wiki.gg
         # gg.wiki.gg is our sandbox wiki that anyone may edit for any reason to test scripts
         # so while you are testing your code, you can leave this as-is and view changes at gg.wiki.gg
         # then change it to your wiki afterwards
-        #self.site = WikiggClient('test', credentials=credentials)
+        self.site = WikiggClient('test', credentials=credentials)
 
 
     def run(self):
         # open an existing file for reading -
-        csvfile = open('character_index.csv', newline='')
+        csvfile = open('character_index_test.csv', newline='')
 
-        # make a new variable - c - for Python's CSV reader object -
+        # make a new variable - table - for Python's CSV reader object -
         table = csv.reader(csvfile)
         wikitext = '{{Example character infobox'
         iter = 0
@@ -57,7 +60,7 @@ class Creator:
             if iter == 0:
                 iter += 1
                 continue
-
+            
             data = {
                 "title": str(row[1]),
                 "s_name": str(row[2]),
@@ -82,17 +85,11 @@ class Creator:
 
             wikitext += "}}"
 
-            print(wikitext)
+            #print(wikitext)
 
-                
-            
-
-            #TODO: ignore empty rows and columns
             page_name = row[0]
             page = self.site.client.pages[page_name]
-            page_text = WIKITEXT.format(
-                
-            )
+            page_text = wikitext
 
             print(page)
 
@@ -103,32 +100,6 @@ class Creator:
             page.save(page_text, summary=self.summary)
 
         csvfile.close()
-
-    @staticmethod
-    def get_recipe_text(info):
-        if len(info['ingredients']) == 0:
-            # We could also choose to always return something here, and simply sometimes
-            # have an empty |Recipe= parameter in the item infobox.
-            # That would simplify the code a bit and not really cause any problems,
-            # I just wanted to show a slightly more complex operation that you can simplify
-            # rather than the other way around
-            return ''
-        # when doing string.format, {{ will be condensed down to {
-        # so there are often a lot of { and } when you put wikitext here
-        recipe_string = '{{{{RecipePart|item={ing}|quantity={q}}}}}'
-        ingredients = ''.join(
-            [recipe_string.format(ing=string.capwords(x['ingredient']), q=x['quantity']) for x in info['ingredients']])
-        return f'|Recipe={ingredients}\n'
-
-    def get_builds_into_text(self, item):
-        for _, other in self.data.items():
-            for ing in other['ingredients']:
-                if ing['ingredient'] == item:
-                    # as this string won't be in any string.format call, there is
-                    # no need to escape the open & closing braces here
-                    return '== Builds into ==\n{{BuildsInto}}'
-        return ''
-
 
 if __name__ == '__main__':
     Creator().run()
