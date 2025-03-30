@@ -1,2 +1,4 @@
 venv/*
 .idea/*
+character_index.csv
+*.csv
