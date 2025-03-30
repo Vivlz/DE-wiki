@@ -6,75 +6,59 @@ from dotenv import load_dotenv
 from mwcleric import AuthCredentials
 from mwcleric import WikiggClient
 
-#actually not used, just here for reference
-WIKITEXT = """{{Example character infobox
-|title={{PAGENAME}}
-
-|sections=General Info, Game Info, Biography, Voice Acting
-
-|General Info=Title,Speaking Name,AKA,Role
-|Game Info=Affiliation, In-Game Location, First Appearance
-|Biography=Age, Nationality, Ethnicity 
-|Voice Acting=Pre-Release, Original Release, Final Cut 
-
-|Title = {title}
-|Speaking Name = {s_name}
-|AKA = {aka}
-|Role ={role}
-
-|Affiliation = {aff}
-|In-Game Location = {location}
-|First Appearance = {appearance}
-
-|Age = {age}
-|Nationality = {nationality}
-|Ethnicity ={ethnicity})
-
-|Prerelease = {pre_release}
-|Original Release={og_release}
-|Final Cut = {final_cut}}}
-"""
+#Note: rate limit only allows for 47 pages to be created/updated at a time
 
 class Creator:
     summary = 'Creating new pages from data file'
-
+    
     def __init__(self):
-        credentials = AuthCredentials()
+        #load_dotenv()
+        #username = os.getenv("USERNAME")
+        #password = os.getenv("PASSWORD")
+        #credentials = AuthCredentials(username=username,password=password)
         # the following login has been changed to edit gg.wiki.gg rather than sorcererbyriver.wiki.gg
         # gg.wiki.gg is our sandbox wiki that anyone may edit for any reason to test scripts
         # so while you are testing your code, you can leave this as-is and view changes at gg.wiki.gg
         # then change it to your wiki afterwards
-        self.site = WikiggClient('test', credentials=credentials)
+        #self.site = WikiggClient('discoelysium', credentials=credentials)
+
+        credentials = AuthCredentials(user_file="me")
+        # the following login has been changed to edit gg.wiki.gg rather than sorcererbyriver.wiki.gg
+        # gg.wiki.gg is our sandbox wiki that anyone may edit for any reason to test scripts
+        # so while you are testing your code, you can leave this as-is and view changes at gg.wiki.gg
+        # then change it to your wiki afterwards
+        self.site = WikiggClient('discoelysium', credentials=credentials)
 
 
     def run(self):
         # open an existing file for reading -
-        csvfile = open('character_index_test.csv', newline='')
+        csvfile = open('character_index.csv', newline='')
 
         # make a new variable - table - for Python's CSV reader object -
         table = csv.reader(csvfile)
-        wikitext = '{{Example character infobox'
+        
         iter = 0
         for row in table:
+            wikitext = '{{Example character infobox'
 
             if iter == 0:
                 iter += 1
                 continue
-            
+   
             data = {
-                "title": str(row[1]),
-                "s_name": str(row[2]),
-                "aka": str(row[3]),
-                "role": str(row[4]),
-                "aff": str(row[6]),
-                "location": str(row[7]),
-                "appearance": str(row[8]),
-                "age": str(row[10]),
-                "nationality": str(row[11]),
-                "ethnicity": str(row[12]),
-                "pre_release": str(row[14]),
-                "og_release": str(row[15]),
-                "final_cut": str(row[16])
+                "Title": str(row[1]),
+                "Speaking Name": str(row[2]),
+                "AKA": str(row[3]),
+                "Role": str(row[4]),
+                "Affiliation": str(row[6]),
+                "In-Game Location": str(row[7]),
+                "First Appeatance": str(row[8]),
+                "Age": str(row[10]),
+                "Nationality": str(row[11]),
+                "Ethnicity": str(row[12]),
+                "Prerelease": str(row[14]),
+                "Original Release": str(row[15]),
+                "Final Cut": str(row[16])
             }
 
             for key,value in data.items():
